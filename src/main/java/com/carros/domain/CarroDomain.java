@@ -1,17 +1,12 @@
-package com.carros.entity;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+package com.carros.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import lombok.*;
 
-
-@Entity(name = "carro")
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
 @NoArgsConstructor
-public class CarroEntity {
+public class CarroDomain {
 
     public Long getId() {
         return id;
@@ -37,8 +32,6 @@ public class CarroEntity {
         this.tipo = tipo;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
     private String tipo;
