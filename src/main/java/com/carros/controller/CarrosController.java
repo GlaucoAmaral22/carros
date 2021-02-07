@@ -7,6 +7,7 @@ import com.carros.service.CarroService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -23,12 +24,15 @@ public class CarrosController {
     private CarroService service;
 
     @GetMapping()
+    @Secured({"ROLE_USER"})
     public ResponseEntity<List<CarroDomain>> getAllCarros() {
         return ResponseEntity.ok(service.getCarros());
+        //return new ResponseEntity(service.getCarros(), HttpStatus.OK);
         //return new ResponseEntity(service.getCarros(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
+    @Secured({"ROLE_USER"})
     public ResponseEntity<CarroDomain> getCarroById(@PathVariable("id") Long id) {
         CarroDomain carroDomain = service.getCarroById(id);
         return ResponseEntity.ok(carroDomain);
@@ -36,6 +40,7 @@ public class CarrosController {
     }
 
     @GetMapping("/tipo/{tipo}")
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     public ResponseEntity<List<CarroDomain>> getCarrosByTipo(@PathVariable("tipo") String tipo) {
         List<CarroDomain> carroDomains = service.getCarroByTipo(tipo);
         return carroDomains.isEmpty() ?
@@ -44,6 +49,7 @@ public class CarrosController {
     }
 
     @PostMapping
+    @Secured({"ROLE_USER"})
     public ResponseEntity post(@RequestBody CarroEntity carro) {
         CarroDomain c = service.insert(carro);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(c.getId()).toUri();
@@ -61,6 +67,7 @@ public class CarrosController {
     }
 
     @DeleteMapping("/{id}")
+    @Secured({"ROLE_USER"})
     public ResponseEntity<Object> delete(@PathVariable("id") Long id) {
         service.delete(id);
         return ResponseEntity.ok().build();
