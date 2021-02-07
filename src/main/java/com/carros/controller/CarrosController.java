@@ -57,6 +57,7 @@ public class CarrosController {
     }
 
     @PutMapping("/{id}")
+    @Secured({"ROLE_USER"})
     public ResponseEntity put(@PathVariable("id") Long id, @RequestBody CarroEntity carro) {
         System.out.printf("valor id: " + id);
         CarroDomain c = service.update(carro, id);
