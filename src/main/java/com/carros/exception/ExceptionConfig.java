@@ -24,11 +24,14 @@ public class ExceptionConfig extends ResponseEntityExceptionHandler {
         return ResponseEntity.badRequest().build();
     }
 
-    @ExceptionHandler({
+    //Poderia deixar a tratativa para o exception handler aqui, mas preferi deixar na classe isolada por estar relacionado a segurança. Deixar aqui somente a parte de erros mais genericos da app.
+    /*@ExceptionHandler({
             AccessDeniedException.class
     })
     public ResponseEntity erroAcessDenies(){
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new Error("Acesso Negado"));
-    }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new Error("Acesso Negaduuuu"));
+    }*/
+
+
 
 }

@@ -1,18 +1,23 @@
 package com.carros.security;
 
+import com.carros.security.jwt.JwtAuthenticationFilter;
+import com.carros.security.jwt.JwtAuthorizationFilter;
+import com.carros.security.jwt.handler.AccessDeniedHandler;
+import com.carros.security.jwt.handler.UnauthorizedHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.lang.reflect.GenericDeclaration;
 
 @Configuration
 @EnableWebSecurity
@@ -23,13 +28,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Qualifier("userDetailService") //quando for fazer a injecao, utilizar o objeto com a identificacao passada
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private UnauthorizedHandler unauthorizedHandler; //essa classe é simples para retornar que o cliente não está autorizado ;)
+
+    @Autowired
+    private AccessDeniedHandler accesDeniedHandler; //essa classe é simples para retornar que o cliente não está autorizado ;)
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .anyRequest()
-                .authenticated()
-                .and().httpBasic()
-                .and().csrf().disable();
+        AuthenticationManager authManager = authenticationManager(); //authenticaion manager do spring
+
+        http
+                .authorizeRequests()
+                .antMatchers(HttpMethod.GET, "/api/v1/login").permitAll()
+                .anyRequest().authenticated()
+                .and().csrf().disable()
+                .addFilter(new JwtAuthenticationFilter(authManager))
+                .addFilter(new JwtAuthorizationFilter(authManager, userDetailsService))
+                .exceptionHandling()
+                .accessDeniedHandler(accesDeniedHandler)//os erros de nao puder ser autenticado cairão para AccessDeniedHandler
+                .authenticationEntryPoint(unauthorizedHandler)//os erros de não autorizados cairão para dentro da UnauthorizedHandler
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); //desliga os cookies da sessão
     }
 
     @Override
@@ -37,9 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
         auth.userDetailsService(userDetailsService).passwordEncoder(encoder);
-
-//
-//        auth.inMemoryAuthentication().passwordEncoder(encoder).withUser("user").password(encoder.encode("user")).roles("USER")
-//        .and().withUser("admin").password(encoder.encode("admin")).roles("USER", "ADMIN");
+        //auth.inMemoryAuthentication().passwordEncoder(encoder).withUser("user").password(encoder.encode("user")).roles("USER")
+        //.and().withUser("admin").password(encoder.encode("admin")).roles("USER", "ADMIN");
     }
 }
