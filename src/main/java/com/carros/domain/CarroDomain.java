@@ -1,12 +1,15 @@
 package com.carros.domain;
 
 import lombok.*;
+import org.springframework.boot.jackson.JsonComponent;
+
+import java.io.Serializable;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CarroDomain {
+public class CarroDomain implements Serializable {
 
     public Long getId() {
         return id;

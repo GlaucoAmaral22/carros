@@ -5,7 +5,7 @@ import com.carros.domain.CarroDomain;
 import com.carros.entity.CarroEntity;
 import com.carros.service.CarroService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/carros")
@@ -27,7 +26,6 @@ public class CarrosController {
     @Secured({"ROLE_USER"})
     public ResponseEntity<List<CarroDomain>> getAllCarros() {
         return ResponseEntity.ok(service.getCarros());
-        //return new ResponseEntity(service.getCarros(), HttpStatus.OK);
         //return new ResponseEntity(service.getCarros(), HttpStatus.OK);
     }
 
@@ -74,5 +72,8 @@ public class CarrosController {
         return ResponseEntity.ok().build();
     }
 
-
+    //Anotações para Cache:
+    // @Cacheable
+    // @CacheEvict
+    // @CachePut.
 }
