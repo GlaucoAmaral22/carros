@@ -6,5 +6,5 @@ Como complementos, faltam:
 1.  ̶JWT Authentication.(Finalizado)
 2. Implementação de um Consumido/Produtor com Apache Kafka.
 3. Implementação de Testes Unitários e Integração.
-4. Implementação de Chache com Redis.
+4. Implementação de Chache com Redis.(Finalizado)
 5. CI/CD.
